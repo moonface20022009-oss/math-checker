@@ -7,13 +7,6 @@
     <title>فحص العمليات الحسابية - جدول تلقائي</title>
     <!-- ضع هذا الكود داخل <head> -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
-    <!-- مكتبة Tesseract.js لاستخراج النص من الصور -->
-<script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
-
-<!-- مكتبة لتحسين تجربة المستخدم -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    
     <style>
         * {
             box-sizing: border-box;
@@ -585,78 +578,6 @@
 
 
 
-/* تحسينات للكاميرا */
-#camera-btn:hover {
-    background: linear-gradient(135deg, #128C7E, #075E54);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
-    transition: all 0.3s ease;
-}
-
-#capture-btn:hover {
-    background: #2980b9;
-    transform: scale(1.05);
-}
-
-#flip-camera:hover {
-    background: #6c7a7d;
-    transform: scale(1.05);
-}
-
-#use-text-btn:hover {
-    background: #27ae60;
-    transform: scale(1.05);
-}
-
-#retry-btn:hover {
-    background: #e67e22;
-    transform: scale(1.05);
-}
-
-/* تحسينات للجوال */
-@media (max-width: 768px) {
-    #camera-modal > div {
-        width: 95%;
-        padding: 15px;
-    }
-    
-    .video-container {
-        height: 60vh;
-    }
-}
-
-/* رسوم متحركة */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-#camera-btn:active {
-    animation: pulse 0.2s ease;
-}
-
-/* تحسين مظهر النص المستخرج */
-#extracted-text {
-    line-height: 1.6;
-    background: white;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-}
-
-/* مؤشر تحميل */
-.fa-spin {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-
 
     </style>
 </head>
@@ -666,219 +587,6 @@
 
     <div class="container">
         <h1>أداة فحص العمليات الحسابية   </h1>
-
-        <!-- زر فتح الكاميرا -->
-<button id="camera-btn" style="
-    background: linear-gradient(135deg, #25D366, #128C7E);
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 10px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    max-width: 300px;
-">
-    <i class="fas fa-camera"></i>
-    مسح النص بالكاميرا
-</button>
-
-
-<div style="
-    background: #f8f9fa;
-    border-right: 4px solid #25D366;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 8px;
-    font-size: 14px;
-">
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-        <i class="fas fa-info-circle" style="color: #25D366; font-size: 18px;"></i>
-        <strong style="color: #333;">كيفية استخدام الكاميرا مع الواتساب ويب:</strong>
-    </div>
-    <ol style="margin: 0; padding-right: 20px; color: #555;">
-        <li>افتح الواتساب ويب على الكمبيوتر</li>
-        <li>افتح المحادثة التي تحتوي على النص</li>
-        <li>اضغط زر "مسح النص بالكاميرا" في هذا التطبيق</li>
-        <li>وجه كاميرا الموبايل نحو شاشة الكمبيوتر</li>
-        <li>اضغط "التقاط" عندما يكون النص واضحاً</li>
-        <li>انتظر استخراج النص ثم اضغط "استخدام النص"</li>
-    </ol>
-</div>
-
-<!-- نافذة الكاميرا -->
-<div id="camera-modal" style="
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
-">
-
-    <div style="
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        max-width: 90%;
-        max-height: 90%;
-        overflow: auto;
-    ">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="margin: 0; color: #333;">مسح النص بالكاميرا</h3>
-            <button id="close-camera" style="
-                background: #e74c3c;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                cursor: pointer;
-                font-size: 18px;
-            ">×</button>
-        </div>
-
-        <!-- فيديو الكاميرا -->
-        <video id="camera-video" autoplay playsinline style="
-            width: 100%;
-            max-width: 500px;
-            border-radius: 8px;
-            background: #000;
-            margin-bottom: 15px;
-        "></video>
-
-        <!-- الأزرار -->
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button id="capture-btn" style="
-                background: #3498db;
-                color: white;
-                border: none;
-                padding: 12px 20px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            ">
-                <i class="fas fa-camera"></i> التقاط
-            </button>
-            
-            <button id="flip-camera" style="
-                background: #7f8c8d;
-                color: white;
-                border: none;
-                padding: 12px 20px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            ">
-                <i class="fas fa-sync-alt"></i> تبديل الكاميرا
-            </button>
-        </div>
-
-        <!-- معاينة الصورة -->
-        <canvas id="photo-canvas" style="
-            display: none;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 8px;
-            margin: 15px 0;
-        "></canvas>
-
-        <!-- نتيجة الاستخراج -->
-        <div id="ocr-result" style="
-            margin-top: 15px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-        ">
-            <div style="font-weight: bold; margin-bottom: 10px; color: #2c3e50;">
-                النص المستخرج:
-            </div>
-            <div id="extracted-text" style="white-space: pre-wrap; font-family: monospace;"></div>
-        </div>
-
-        <!-- أزرار الإجراءات -->
-        <div id="action-buttons" style="display: none; margin-top: 15px; gap: 10px;">
-            <button id="use-text-btn" style="
-                background: #2ecc71;
-                color: white;
-                border: none;
-                padding: 12px 20px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                flex: 1;
-            ">
-                <i class="fas fa-check"></i> استخدام النص
-            </button>
-            
-            <button id="retry-btn" style="
-                background: #f39c12;
-                color: white;
-                border: none;
-                padding: 12px 20px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                flex: 1;
-            ">
-                <i class="fas fa-redo"></i> إعادة المحاولة
-            </button>
-        </div>
-
-        <!-- مؤشر التحميل -->
-        <div id="ocr-loading" style="
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #3498db;
-        ">
-            <i class="fas fa-spinner fa-spin fa-2x"></i>
-            <div style="margin-top: 10px;">جاري استخراج النص من الصورة...</div>
-        </div>
-    </div>
-
-    <!-- تعليمات الاستخدام -->
-    <div style="color: white; margin-top: 15px; text-align: center; max-width: 500px;">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 5px;">
-                <i class="fas fa-lightbulb" style="color: #f1c40f;"></i>
-                <span>1. وجه الكاميرا نحو النص</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-                <i class="fas fa-lightbulb" style="color: #f1c40f;"></i>
-                <span>2. اضغط "التقاط"</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-                <i class="fas fa-lightbulb" style="color: #f1c40f;"></i>
-                <span>3. انتظر استخراج النص</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-        
         
    <!-- استبدال قسم التعليمات الحالي بهذا الكود -->
 <div class="collapsible-instructions" id="instructions-container">
@@ -1607,257 +1315,6 @@ function toggleInstructions() {
         localStorage.removeItem('instructionsCollapsed');
     }
 }
-
-
-
-
-// متغيرات الكاميرا
-let cameraStream = null;
-let currentCamera = 'environment'; // 'environment' للخلفية، 'user' للأمامية
-let capturedPhoto = null;
-
-// عناصر DOM
-const cameraBtn = document.getElementById('camera-btn');
-const cameraModal = document.getElementById('camera-modal');
-const closeCameraBtn = document.getElementById('close-camera');
-const cameraVideo = document.getElementById('camera-video');
-const captureBtn = document.getElementById('capture-btn');
-const flipCameraBtn = document.getElementById('flip-camera');
-const photoCanvas = document.getElementById('photo-canvas');
-const ocrResult = document.getElementById('ocr-result');
-const extractedText = document.getElementById('extracted-text');
-const actionButtons = document.getElementById('action-buttons');
-const useTextBtn = document.getElementById('use-text-btn');
-const retryBtn = document.getElementById('retry-btn');
-const ocrLoading = document.getElementById('ocr-loading');
-
-// فتح نافذة الكاميرا
-cameraBtn.addEventListener('click', openCamera);
-closeCameraBtn.addEventListener('click', closeCamera);
-captureBtn.addEventListener('click', capturePhoto);
-flipCameraBtn.addEventListener('click', flipCamera);
-useTextBtn.addEventListener('click', useExtractedText);
-retryBtn.addEventListener('click', retryCapture);
-
-// دالة فتح الكاميرا
-async function openCamera() {
-    try {
-        cameraModal.style.display = 'flex';
-        
-        // طلب إذن الوصول للكاميرا
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: currentCamera,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            },
-            audio: false
-        });
-        
-        // عرض الفيديو
-        cameraVideo.srcObject = cameraStream;
-        cameraVideo.play();
-        
-        // إعادة تعيين العناصر
-        photoCanvas.style.display = 'none';
-        ocrResult.style.display = 'none';
-        actionButtons.style.display = 'none';
-        ocrLoading.style.display = 'none';
-        
-    } catch (error) {
-        console.error('خطأ في فتح الكاميرا:', error);
-        alert('تعذر الوصول إلى الكاميرا. يرجى التحقق من الإذونات.');
-        closeCamera();
-    }
-}
-
-// دالة إغلاق الكاميرا
-function closeCamera() {
-    // إيقاف تدفق الفيديو
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        cameraStream = null;
-    }
-    
-    cameraModal.style.display = 'none';
-    cameraVideo.srcObject = null;
-}
-
-// دالة التقاط صورة
-function capturePhoto() {
-    const context = photoCanvas.getContext('2d');
-    
-    // ضبط أبعاد canvas لتتناسب مع الفيديو
-    photoCanvas.width = cameraVideo.videoWidth;
-    photoCanvas.height = cameraVideo.videoHeight;
-    
-    // رسم الفيديو على canvas
-    context.drawImage(cameraVideo, 0, 0, photoCanvas.width, photoCanvas.height);
-    
-    // حفظ الصورة
-    capturedPhoto = photoCanvas.toDataURL('image/jpeg');
-    
-    // إخفاء الفيديو وإظهار الصورة
-    cameraVideo.style.display = 'none';
-    photoCanvas.style.display = 'block';
-    
-    // استخراج النص من الصورة
-    extractTextFromImage(capturedPhoto);
-}
-
-// دالة استخراج النص باستخدام Tesseract.js
-async function extractTextFromImage(imageData) {
-    try {
-        // إظهار مؤشر التحميل
-        ocrLoading.style.display = 'block';
-        ocrResult.style.display = 'none';
-        actionButtons.style.display = 'none';
-        
-        // استخدام Tesseract.js لاستخراج النص
-        const { data: { text } } = await Tesseract.recognize(
-            imageData,
-            'ara+eng', // العربية والإنجليزية
-            {
-                logger: progress => {
-                    console.log('تقدم الاستخراج:', progress);
-                }
-            }
-        );
-        
-        // إخفاء مؤشر التحميل
-        ocrLoading.style.display = 'none';
-        
-        // تنظيف النص المستخرج
-        const cleanedText = cleanExtractedText(text);
-        
-        // عرض النص المستخرج
-        extractedText.textContent = cleanedText;
-        ocrResult.style.display = 'block';
-        actionButtons.style.display = 'flex';
-        
-    } catch (error) {
-        console.error('خطأ في استخراج النص:', error);
-        ocrLoading.style.display = 'none';
-        extractedText.textContent = 'عذراً، تعذر استخراج النص من الصورة. يرجى المحاولة مرة أخرى.';
-        ocrResult.style.display = 'block';
-        actionButtons.style.display = 'flex';
-    }
-}
-
-// دالة تنظيف النص المستخرج
-function cleanExtractedText(text) {
-    return text
-        .replace(/\n\s*\n/g, '\n') // إزالة الأسطر الفارغة المتعددة
-        .replace(/\s+/g, ' ') // إزالة المسافات الزائدة
-        .trim();
-}
-
-// دالة استخدام النص المستخرج
-function useExtractedText() {
-    const text = extractedText.textContent.trim();
-    
-    if (text && text !== '') {
-        // إيجاد الصف الفارغ الأخير أو إضافة صف جديد
-        const rows = document.querySelectorAll('#table-body tr');
-        let targetRowId = null;
-        
-        // البحث عن صف فارغ
-        for (let row of rows) {
-            const inputId = `input-${row.id}`;
-            const inputField = document.getElementById(inputId);
-            if (inputField && inputField.value.trim() === '') {
-                targetRowId = row.id;
-                break;
-            }
-        }
-        
-        // إذا لم يوجد صف فارغ، نضيف صف جديد
-        if (!targetRowId) {
-            targetRowId = addResponsiveTableRow(true);
-        }
-        
-        // إدخال النص في حقل الإدخال
-        const inputField = document.getElementById(`input-${targetRowId}`);
-        if (inputField) {
-            inputField.value = text;
-            // فحص النص تلقائياً
-            checkAndDisplayResult(targetRowId);
-        }
-        
-        // إغلاق نافذة الكاميرا
-        closeCamera();
-    }
-}
-
-// دالة إعادة المحاولة
-function retryCapture() {
-    // إعادة العرض للكاميرا
-    cameraVideo.style.display = 'block';
-    photoCanvas.style.display = 'none';
-    ocrResult.style.display = 'none';
-    actionButtons.style.display = 'none';
-    capturedPhoto = null;
-}
-
-// دالة تبديل الكاميرا
-async function flipCamera() {
-    // إيقاف الكاميرا الحالية
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-    }
-    
-    // تبديل نوع الكاميرا
-    currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
-    
-    // إعادة فتح الكاميرا بالنوع الجديد
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: currentCamera,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            },
-            audio: false
-        });
-        
-        cameraVideo.srcObject = cameraStream;
-        cameraVideo.play();
-        
-    } catch (error) {
-        console.error('خطأ في تبديل الكاميرا:', error);
-        alert('تعذر تبديل الكاميرا.');
-    }
-}
-
-// إضافة حدث إغلاق بالنقر خارج النافذة
-cameraModal.addEventListener('click', function(event) {
-    if (event.target === cameraModal) {
-        closeCamera();
-    }
-});
-
-// إضافة حدث إغلاق بمفتاح ESC
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape' && cameraModal.style.display === 'flex') {
-        closeCamera();
-    }
-});
-
-// تدريب Tesseract مسبقاً لتحسين الأداء
-async function preloadTesseract() {
-    try {
-        console.log('جاري تحميل Tesseract...');
-        await Tesseract.createWorker('ara+eng');
-        console.log('Tesseract جاهز للاستخدام');
-    } catch (error) {
-        console.error('خطأ في تحميل Tesseract:', error);
-    }
-}
-
-// تحميل Tesseract عند بدء التطبيق
-window.addEventListener('load', function() {
-    setTimeout(preloadTesseract, 1000);
-});
 
 
 
