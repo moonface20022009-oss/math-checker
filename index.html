@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فحص العمليات الحسابية - جدول تلقائي</title>
+    <!-- ضع هذا الكود داخل <head> -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .description {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .calculation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .calculation-table th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+            position: sticky;
+            top: 0;
+        }
+
+        .calculation-table td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .input-cell {
+            background-color: #f8f9fa;
+        }
+
+        .result-cell {
+            background-color: #f0f7ff;
+            font-weight: bold;
+            width: 35%;
+            min-width: 120px;
+        }
+
+        .correct {
+            color: #27ae60;
+        }
+
+        .incorrect {
+            color: #e74c3c;
+        }
+
+        .text-input {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 14px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            transition: border 0.3s;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .instructions {
+            background-color: #f8f9fa;
+            border-right: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .instructions h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .instructions ul {
+            padding-right: 18px;
+            margin-bottom: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .example-btn {
+            background-color: #ecf0f1;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 13px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .example-btn:hover {
+            background-color: #d5dbdb;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .clear-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        .auto-check-info {
+            background-color: #e8f6f3;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 13px;
+            text-align: center;
+            border-right: 3px solid #1abc9c;
+        }
+
+        .operation-details {
+            margin-top: 8px;
+            padding: 6px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .operation-highlight {
+            background-color: #fffacd;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            margin: 4px 0;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        .paste-indicator {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background-color: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .text-input-container {
+            position: relative;
+        }
+
+        .showing {
+            opacity: 1;
+        }
+
+        .row-number {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .calculation-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .calculation-table th,
+            .calculation-table td {
+                min-width: 150px;
+            }
+
+            .result-cell {
+                width: 40%;
+            }
+        }
+
+        .empty-row {
+            opacity: 0.7;
+        }
+
+        .empty-row .text-input {
+            border-style: dashed;
+            border-color: #aaa;
+        }
+
+        .status-icon {
+            font-size: 20px;
+            margin-left: 5px;
+        }
+
+
+
+        /* إضافة هذه الأنماط إلى قسم الستايل الحالي */
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .calculation-table {
+            width: 100%;
+            min-width: 600px;
+            /* الحد الأدنى لعرض الجدول */
+            border-collapse: collapse;
+            transition: all 0.3s ease;
+        }
+
+        /* نمط للشاشات الصغيرة جداً */
+        @media (max-width: 640px) {
+            .calculation-table {
+                min-width: 500px;
+            }
+
+            .calculation-table th,
+            .calculation-table td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+
+            .text-input {
+                height: 90px;
+                font-size: 13px;
+                padding: 8px;
+            }
+
+            .result-cell {
+                min-width: 100px;
+            }
+        }
+
+        /* نمط للشاشات المتوسطة */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .calculation-table {
+                min-width: 100%;
+            }
+
+            .result-cell {
+                width: 30%;
+            }
+
+            .input-cell {
+                width: 70%;
+            }
+        }
+
+        /* نمط للشاشات الكبيرة */
+        @media (min-width: 1025px) {
+            .calculation-table {
+                min-width: 100%;
+            }
+
+            .container {
+                max-width: 1200px;
+            }
+        }
+
+        /* إضافة شريط تمرير أنيق للجدول */
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+
+
+        /* إصلاح مشاكل اللمس على الجوال */
+        @media (max-width: 768px) {
+            body {
+                -webkit-text-size-adjust: 100%;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            }
+
+            .text-input {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+
+            /* تحسين تجربة التمرير على الجوال */
+            .table-container {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* تحسين حجم الخط للشاشات الصغيرة */
+            .result-text {
+                font-size: 16px !important;
+            }
+
+            .row-number {
+                font-size: 11px;
+            }
+        }
+
+
+
+
+        /* إضافة هذه الأنماط إلى قسم الستايل الحالي */
+
+        .collapsible-instructions {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .instructions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .instructions-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: white;
+        }
+
+        .toggle-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-icon.collapsed {
+            transform: rotate(180deg);
+        }
+
+        .instructions-content {
+            padding: 0;
+            max-height: 1000px;
+            opacity: 1;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .instructions-content.collapsed {
+            padding: 0;
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .instructions-body {
+            padding: 15px;
+        }
+
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .instructions-header {
+                padding: 12px;
+            }
+
+            .instructions-header h3 {
+                font-size: 16px;
+            }
+
+            .instructions-body {
+                padding: 12px;
+            }
+        }
+
+
+
+        /* إضافة هذه الأنماط لتحسين الرسوم المتحركة */
+.instructions-header {
+    transition: background-color 0.2s ease;
+}
+
+.instructions-header:hover {
+    background-color: #2980b9;
+}
+
+/* تأثير للضغط على الزر */
+.instructions-header:active {
+    background-color: #2472a4;
+    transform: translateY(1px);
+}
+
+/* تحسين مظهر القائمة */
+.instructions-body ul {
+    padding-right: 18px;
+    margin-bottom: 15px;
+}
+
+.instructions-body li {
+    margin-bottom: 8px;
+    padding-right: 5px;
+    transition: color 0.2s ease;
+}
+
+.instructions-body li:hover {
+    color: #2c3e50;
+}
+
+/* تحسين مظهر أمثلة الاختبار */
+.examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.example-btn {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.example-btn:active {
+    transform: scale(0.98);
+}
+
+/* تأثير رائع للأزرار */
+.example-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.example-btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+
+
+
+
+/* إضافة هذه الأنماط إلى قسم الستايل */
+
+.total-check {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.total-correct {
+    background-color: #e8f6f3;
+    border-right: 4px solid #27ae60;
+    color: #27ae60;
+}
+
+.total-incorrect {
+    background-color: #ffebee;
+    border-right: 4px solid #e74c3c;
+    color: #e74c3c;
+}
+
+.operations-count {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-bottom: 8px;
+}
+
+
+
+
+    </style>
+</head>
+
+<body>
+
+
+    <div class="container">
+        <h1>أداة فحص العمليات الحسابية   </h1>
+        
+   <!-- استبدال قسم التعليمات الحالي بهذا الكود -->
+<div class="collapsible-instructions" id="instructions-container">
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <h3>كيفية الاستخدام</h3>
+        <div class="toggle-icon" id="toggle-icon">▼</div>
+    </div>
+    <div class="instructions-content" id="instructions-content">
+        <div class="instructions-body">
+            <ul>
+                <li>الصق أو اكتب أي نص في العمود الأيسر</li>
+                <li>النتيجة تظهر تلقائياً في العمود الأيمن</li>
+                <li>بعد ظهور النتيجة، يضاف صف جديد تلقائياً</li>
+                <li>البرنامج يتعرف على العمليات مثل: <strong>28695-D1760-219=26716</strong></li>
+                <li>يتجاهل الأحرف غير الرقمية (D، RMB، USD، إلخ)</li>
+            </ul>
+            
+            <div class="auto-check-info">
+                ⚡ الفحص تلقائي - النتيجة تظهر فوراً عند اللصق أو الكتابة
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+        <!-- استبدال الجدول الحالي بهذا الهيكل -->
+        <div class="table-container">
+            <table class="calculation-table" id="calculation-table">
+                <thead>
+                    <tr>
+                        <th width="35%">نتيجة الفحص</th>
+                        <th width="65%">النص المدخل</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- سيتم إضافة الصفوف هنا ديناميكياً -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions">
+            <button class="clear-btn" onclick="clearAllRows()">مسح جميع الصفوف</button>
+        </div>
+
+        <div class="footer">
+            <p>تم إنشاء هذه الأداة بواسطة MEDO 2026 </p>
+        </div>
+    </div>
+
+    <script>
+        // أمثلة نصية تحتوي على عمليات حسابية
+        const examples = [
+            // مثال 1: نص يحتوي على أحرف غير لاتينية
+            `䔣 lily SHOP,ALI MOSTAFS,3BAG,439PCS,28695-D1760-219=26716RMB`,
+
+            // مثال 2: فاتورة شحن
+            `晓SHOP,ALI MOSTAFS,1BAG,144PCS,6720-D50=6670RMB`,
+
+            // مثال 3: نص مع أحرف صينية
+            `商品价格: 15000元\n折扣: 500元\n实付金额: 15000-折扣500=14500元`
+        ];
+
+        // عدد الصفوف الحالي
+        let rowCount = 0;
+        let lastFocusedRowId = null;
+
+
+
+
+
+        // إضافة هذه الدوال في بداية الـ script بعد تعريف المتغيرات
+
+// حالة قسم التعليمات (مطوي أو مفتوح)
+let instructionsCollapsed = false;
+
+// دالة لطي وفرد قسم التعليمات
+function toggleInstructions() {
+    const content = document.getElementById('instructions-content');
+    const icon = document.getElementById('toggle-icon');
+    const container = document.getElementById('instructions-container');
+    
+    instructionsCollapsed = !instructionsCollapsed;
+    
+    if (instructionsCollapsed) {
+        // طي القسم
+        content.classList.add('collapsed');
+        icon.classList.add('collapsed');
+        container.style.borderBottomLeftRadius = '8px';
+        container.style.borderBottomRightRadius = '8px';
+        
+        // حفظ الحالة في localStorage
+        localStorage.setItem('instructionsCollapsed', 'true');
+    } else {
+        // فرد القسم
+        content.classList.remove('collapsed');
+        icon.classList.remove('collapsed');
+        
+        // إزالة الحالة من localStorage
+        localStorage.removeItem('instructionsCollapsed');
+    }
+}
+
+// دالة لتحميل حالة التعليمات من localStorage
+function loadInstructionsState() {
+    const savedState = localStorage.getItem('instructionsCollapsed');
+    
+    if (savedState === 'true') {
+        instructionsCollapsed = true;
+        
+        // تطبيق الحالة المحفوظة
+        setTimeout(() => {
+            const content = document.getElementById('instructions-content');
+            const icon = document.getElementById('toggle-icon');
+            const container = document.getElementById('instructions-container');
+            
+            if (content && icon && container) {
+                content.classList.add('collapsed');
+                icon.classList.add('collapsed');
+                container.style.borderBottomLeftRadius = '8px';
+                container.style.borderBottomRightRadius = '8px';
+            }
+        }, 100);
+    }
+}
+
+// دالة لإغلاق التعليمات عند النقر خارجها (اختياري)
+function setupClickOutside() {
+    document.addEventListener('click', function(event) {
+        const instructionsContainer = document.getElementById('instructions-container');
+        const instructionsHeader = document.querySelector('.instructions-header');
+        
+        // إذا كانت التعليمات مفتوحة وتم النقر خارجها
+        if (!instructionsCollapsed && 
+            instructionsContainer && 
+            !instructionsContainer.contains(event.target) &&
+            event.target !== instructionsHeader) {
+            
+            // إغلاق التعليمات فقط على الشاشات الصغيرة
+            if (window.innerWidth < 768) {
+                toggleInstructions();
+            }
+        }
+    });
+}
+
+
+
+
+
+        // دالة لإنشاء صف جديد في الجدول
+        function createTableRow(isEmpty = true) {
+            rowCount++;
+            const rowId = `row-${Date.now()}-${rowCount}`;
+            const row = document.createElement('tr');
+
+            if (isEmpty) {
+                row.className = 'empty-row';
+            }
+
+            row.id = rowId;
+            row.innerHTML = `
+                <td class="result-cell" id="result-${rowId}">
+                    <div class="row-number">الصف #${rowCount}</div>
+                    <div id="result-text-${rowId}">${isEmpty ? 'النتيجة ستظهر هنا' : ''}</div>
+                    <div id="result-details-${rowId}" class="operation-details" style="display: none;"></div>
+                </td>
+                <td class="input-cell">
+                    <div class="text-input-container">
+                        <div class="paste-indicator" id="paste-indicator-${rowId}">تم اللصق ✓</div>
+                        <textarea 
+                            id="input-${rowId}" 
+                            class="text-input" 
+                            placeholder="الصق أو اكتب النص هنا..."
+                            oninput="handleInput('${rowId}')"
+                            onpaste="showPasteIndicator('${rowId}')"
+                            onfocus="setLastFocusedRow('${rowId}')"
+                        ></textarea>
+                    </div>
+                </td>
+            `;
+
+            return { row, rowId };
+        }
+
+        // دالة لإضافة صف جديد للجدول
+        function addTableRow(isEmpty = true) {
+            const tableBody = document.getElementById('table-body');
+            const { row, rowId } = createTableRow(isEmpty);
+            tableBody.appendChild(row);
+
+            // إذا كان الصف فارغاً، نركز على حقل الإدخال
+            if (isEmpty) {
+                setTimeout(() => {
+                    const inputField = document.getElementById(`input-${rowId}`);
+                    if (inputField) {
+                        inputField.focus();
+                    }
+                }, 100);
+            }
+
+            return rowId;
+        }
+
+        // دالة لتحديث أرقام الصفوف
+        function updateRowNumbers() {
+            const rows = document.querySelectorAll('#table-body tr');
+            rowCount = 0;
+
+            rows.forEach((row, index) => {
+                rowCount++;
+                const rowNumberDiv = row.querySelector('.row-number');
+                if (rowNumberDiv) {
+                    rowNumberDiv.textContent = `الصف #${rowCount}`;
+                }
+            });
+        }
+
+        // دالة لإدراج مثال
+        function insertExample(exampleNumber) {
+            // إيجاد آخر صف فارغ أو إنشاء صف جديد
+            let targetRowId = lastFocusedRowId;
+
+            if (!targetRowId) {
+                const emptyRows = document.querySelectorAll('.empty-row');
+                if (emptyRows.length > 0) {
+                    targetRowId = emptyRows[emptyRows.length - 1].id;
+                } else {
+                    targetRowId = addTableRow(true);
+                }
+            }
+
+            const index = exampleNumber - 1;
+            if (index >= 0 && index < examples.length) {
+                const inputField = document.getElementById(`input-${targetRowId}`);
+                if (inputField) {
+                    inputField.value = examples[index];
+                    checkAndDisplayResult(targetRowId);
+                    showPasteIndicator(targetRowId);
+                }
+            }
+        }
+
+        // دالة لإظهار مؤشر اللصق
+        function showPasteIndicator(rowId) {
+            const indicator = document.getElementById(`paste-indicator-${rowId}`);
+            if (indicator) {
+                indicator.classList.add('showing');
+
+                setTimeout(() => {
+                    indicator.classList.remove('showing');
+                }, 1500);
+            }
+        }
+
+        // دالة لتحديد آخر صف تم التركيز عليه
+        function setLastFocusedRow(rowId) {
+            lastFocusedRowId = rowId;
+        }
+
+        // دالة للتعامل مع الإدخال
+        function handleInput(rowId) {
+            clearTimeout(window.inputTimeout);
+            window.inputTimeout = setTimeout(() => {
+                checkAndDisplayResult(rowId);
+            }, 800);
+        }
+
+        // دالة للتحقق من النص وعرض النتيجة
+        // تحديث دالة checkAndDisplayResult
+function checkAndDisplayResult(rowId) {
+    const inputElement = document.getElementById(`input-${rowId}`);
+    const resultElement = document.getElementById(`result-text-${rowId}`);
+    const detailsElement = document.getElementById(`result-details-${rowId}`);
+    const row = document.getElementById(rowId);
+    
+    const originalText = inputElement.value.trim();
+    
+    // إذا لم يتم إدخال نص
+    if (!originalText) {
+        resultElement.textContent = '';
+        resultElement.className = '';
+        detailsElement.style.display = 'none';
+        
+        if (row && !row.classList.contains('empty-row')) {
+            row.classList.add('empty-row');
+            resultElement.textContent = 'النتيجة ستظهر هنا';
+        }
+        return;
+    }
+    
+    // إزالة حالة الصف الفارغ
+    if (row) {
+        row.classList.remove('empty-row');
+    }
+    
+    // البحث عن العمليات الحسابية والمجموع في النص
+    const result = findCalculationsInText(originalText);
+    const operations = result.operations;
+    const totalCalculated = result.totalCalculated;
+    const totalClaimed = result.totalClaimed;
+    const hasTotal = result.hasTotal;
+    
+    // عرض النتائج
+    if (operations.length === 0) {
+        resultElement.textContent = 'لم يتم العثور على عمليات حسابية';
+        resultElement.className = '';
+        detailsElement.style.display = 'none';
+    } else {
+        const allCorrect = operations.every(op => op.isCorrect);
+        const correctCount = operations.filter(op => op.isCorrect).length;
+        
+        // التحقق من صحة المجموع إذا كان موجوداً
+        let totalCheckHTML = '';
+        if (hasTotal) {
+            const isTotalCorrect = Math.abs(totalCalculated - totalClaimed) < 0.01;
+            
+            if (isTotalCorrect) {
+                totalCheckHTML = `<div style="color: #27ae60; margin-top: 5px; font-size: 14px;">✓ المجموع الكلي صحيح: ${totalClaimed}</div>`;
+            } else {
+                totalCheckHTML = `<div style="color: #e74c3c; margin-top: 5px; font-size: 14px;">✗ المجموع الكلي خطأ: ${totalClaimed} (المجموع الصحيح: ${totalCalculated})</div>`;
+            }
+        }
+        
+        if (allCorrect) {
+            resultElement.innerHTML = `<span class="correct">✓ جميع العمليات صحيحة (${operations.length})</span>${totalCheckHTML}`;
+            resultElement.className = 'correct';
+        } else {
+            resultElement.innerHTML = `<span class="incorrect">✗ ${correctCount}/${operations.length} صحيحة</span>${totalCheckHTML}`;
+            resultElement.className = 'incorrect';
+        }
+        
+        // عرض تفاصيل العمليات
+        let detailsHTML = `<div style="margin-bottom: 10px; font-weight: bold;">العمليات (${operations.length}):</div>`;
+        operations.forEach((op, index) => {
+            let statusHTML = '';
+            let details = '';
+            
+            if (op.isCorrect) {
+                statusHTML = `<span style="color: #27ae60;">✓ صح</span>`;
+                if (op.num3 !== null && op.num3 !== undefined) {
+                    details = `${op.num1} - ${op.num2} - ${op.num3} = ${op.expectedResult}`;
+                } else {
+                    details = `${op.num1} - ${op.num2} = ${op.expectedResult}`;
+                }
+            } else {
+                statusHTML = `<span style="color: #e74c3c;">✗ خطأ</span>`;
+                if (op.num3 !== null && op.num3 !== undefined) {
+                    details = `${op.num1} - ${op.num2} - ${op.num3} = ${op.expectedResult} (الصحيح: ${op.actualResult.toFixed(0)})`;
+                } else {
+                    details = `${op.num1} - ${op.num2} = ${op.expectedResult} (الصحيح: ${op.actualResult.toFixed(0)})`;
+                }
+            }
+            
+            detailsHTML += `
+                <div style="margin-bottom: 8px; padding: 5px; background: ${index % 2 === 0 ? '#f9f9f9' : '#fff'}; border-radius: 4px;">
+                    <div class="operation-highlight">${escapeHtml(op.fullMatch)}</div>
+                    <div style="font-size: 12px;">${statusHTML} - ${details}</div>
+                </div>
+            `;
+        });
+        
+        // عرض المجموع الكلي إذا كان موجوداً
+        if (hasTotal) {
+            const isTotalCorrect = Math.abs(totalCalculated - totalClaimed) < 0.01;
+            
+            detailsHTML += `
+                <div style="margin-top: 15px; padding: 10px; background: ${isTotalCorrect ? '#e8f6f3' : '#ffebee'}; border-radius: 6px; border-right: 4px solid ${isTotalCorrect ? '#27ae60' : '#e74c3c'};">
+                    <div style="font-weight: bold; margin-bottom: 5px;">فحص المجموع الكلي:</div>
+                    <div>المجموع المدعي: <strong>${totalClaimed}</strong></div>
+                    <div>المجموع المحسوب: <strong>${totalCalculated}</strong></div>
+                    <div style="margin-top: 5px; font-weight: bold; color: ${isTotalCorrect ? '#27ae60' : '#e74c3c'}">
+                        ${isTotalCorrect ? '✓ المجموع الكلي صحيح' : '✗ المجموع الكلي خطأ'}
+                    </div>
+                </div>
+            `;
+        } else if (operations.length > 1) {
+            // إذا كان هناك أكثر من عملية ولكن لا يوجد مجموع مذكور
+            detailsHTML += `
+                <div style="margin-top: 15px; padding: 8px; background: #f0f7ff; border-radius: 6px; border-right: 4px solid #3498db;">
+                    <div style="font-size: 13px; color: #2c3e50;">
+                        <strong>ملاحظة:</strong> هناك ${operations.length} عمليات في النص. المجموع الكلي المحسوب: <strong>${totalCalculated}</strong>
+                    </div>
+                </div>
+            `;
+        }
+        
+        detailsElement.innerHTML = detailsHTML;
+        detailsElement.style.display = 'block';
+        
+        // إضافة صف جديد بعد التحقق
+        setTimeout(() => {
+            addNewRowIfNeeded();
+        }, 300);
+    }
+}
+
+        // دالة للبحث عن العمليات الحسابية في النص
+        // تعديل دالة findCalculationsInText لإرجاع معلومات إضافية
+function findCalculationsInText(text) {
+    const operations = [];
+    let totalCalculated = 0;
+    let totalClaimed = null;
+    
+    // النمط: أي تسلسل يحتوي على - و = مع أرقام
+    const pattern = /([\d,]+(?:\.\d+)?)[^\d]*?[-－﹣−‐–—][^\d]*?([\d,]+(?:\.\d+)?)(?:[^\d]*?[-－﹣−‐–—][^\d]*?([\d,]+(?:\.\d+)?))?[^\d]*?=[^\d]*?([\d,]+(?:\.\d+?)?)/gi;
+    
+    let match;
+    
+    // البحث عن جميع المطابقات
+    while ((match = pattern.exec(text)) !== null) {
+        // استخراج الأرقام من المطابقة
+        const numbers = [];
+        
+        for (let i = 1; i < match.length; i++) {
+            if (match[i]) {
+                const cleanNum = match[i].replace(/[^\d\.]/g, '');
+                if (cleanNum) {
+                    numbers.push(parseFloat(cleanNum));
+                }
+            }
+        }
+        
+        if (numbers.length >= 3) {
+            const num1 = numbers[0];
+            let num2 = numbers[1];
+            const expectedResult = numbers[numbers.length - 1];
+            
+            let num3 = numbers.length > 3 ? numbers[2] : null;
+            
+            let actualResult = num1 - num2;
+            if (num3 !== null) {
+                actualResult -= num3;
+            }
+            
+            const roundedActual = Math.round(actualResult * 100) / 100;
+            const roundedExpected = Math.round(expectedResult * 100) / 100;
+            const isCorrect = Math.abs(roundedActual - roundedExpected) < 0.01;
+            
+            // جمع النتائج للتحقق من المجموع
+            totalCalculated += actualResult;
+            
+            operations.push({
+                fullMatch: match[0],
+                num1: num1,
+                num2: num2,
+                num3: num3,
+                expectedResult: expectedResult,
+                actualResult: actualResult,
+                isCorrect: isCorrect
+            });
+        }
+    }
+    
+    // البحث عن المجموع الكلي المذكور في النص
+    const totalPatterns = [
+        /TOTAL\s*[:=]?\s*([\d,]+(?:\.\d+)?)\s*RMB/i,
+        /المجموع\s*[:=]?\s*([\d,]+(?:\.\d+)?)/i,
+        /الإجمالي\s*[:=]?\s*([\d,]+(?:\.\d+)?)/i,
+        /总计\s*[:=]?\s*([\d,]+(?:\.\d+)?)/i,
+        /合计\s*[:=]?\s*([\d,]+(?:\.\d+)?)/i,
+        /总金额\s*[:=]?\s*([\d,]+(?:\.\d+)?)/i
+    ];
+    
+    for (const pattern of totalPatterns) {
+        const totalMatch = text.match(pattern);
+        if (totalMatch) {
+            const cleanTotal = totalMatch[1].replace(/[^\d\.]/g, '');
+            if (cleanTotal) {
+                totalClaimed = parseFloat(cleanTotal);
+                break;
+            }
+        }
+    }
+    
+    return {
+        operations: operations,
+        totalCalculated: Math.round(totalCalculated * 100) / 100,
+        totalClaimed: totalClaimed,
+        hasTotal: totalClaimed !== null
+    };
+}
+
+        // دالة لإضافة صف جديد إذا لزم الأمر
+        // تحديث دالة إضافة صف جديد إذا لزم الأمر
+        function addNewRowIfNeeded() {
+            // التحقق مما إذا كان هناك صف فارغ في النهاية
+            const rows = document.querySelectorAll('#table-body tr');
+            const lastRow = rows[rows.length - 1];
+
+            if (lastRow) {
+                const lastInput = lastRow.querySelector('.text-input');
+                if (lastInput && lastInput.value.trim() !== '') {
+                    // إضافة صف جديد فارغ باستخدام الدالة المتجاوبة
+                    addResponsiveTableRow(true);
+                }
+            } else {
+                // إذا لم يكن هناك صفوف، نضيف صفاً باستخدام الدالة المتجاوبة
+                addResponsiveTableRow(true);
+            }
+        }
+
+        // دالة لمسح جميع الصفوف
+        // تحديث دالة مسح جميع الصفوف
+        function clearAllRows() {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rowCount = 0;
+
+            // إضافة صف فارغ جديد باستخدام الدالة المتجاوبة
+            addResponsiveTableRow(true);
+
+            // إعادة ضبط التخطيط
+            adjustTableLayout();
+            updateTableColumns();
+        }
+
+        // دالة لتجنب مشاكل HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // إضافة صف فارغ عند تحميل الصفحة
+        // تعديل دالة تحميل الصفحة
+        // تحديث دالة تحميل الصفحة لاستدعاء الدوال الجديدة
+window.addEventListener('DOMContentLoaded', function() {
+    // تحميل حالة التعليمات من الذاكرة المحلية
+    loadInstructionsState();
+    
+    // إعداد النقر خارج التعليمات (اختياري)
+    setupClickOutside();
+    
+    // إضافة صفوف فارغة
+    addResponsiveTableRow(true);
+    addResponsiveTableRow(true);
+    
+    // ضبط تخطيط الجدول أول مرة
+    adjustTableLayout();
+    updateTableColumns();
+    
+    // إضافة مستمع لتغيير حجم النافذة
+    window.addEventListener('resize', handleResize);
+    
+    // إضافة مستمع لتوجيه الشاشة
+    window.addEventListener('orientationchange', function() {
+        setTimeout(() => {
+            adjustTableLayout();
+            updateTableColumns();
+        }, 300);
+    });
+    
+    // إغلاق التعليمات تلقائياً على الشاشات الصغيرة جداً
+    if (window.innerWidth < 480 && !instructionsCollapsed) {
+        setTimeout(() => {
+            toggleInstructions();
+        }, 1000);
+    }
+});
+
+
+
+
+        // إضافة هذه الدوال في نهاية الـ script
+
+        // دالة لضبط حجم الجدول حسب حجم الشاشة
+        function adjustTableLayout() {
+            const table = document.getElementById('calculation-table');
+            const container = document.querySelector('.table-container');
+            const screenWidth = window.innerWidth;
+
+            if (!table || !container) return;
+
+            if (screenWidth < 640) {
+                // للشاشات الصغيرة جداً
+                table.style.minWidth = '500px';
+                table.style.fontSize = '14px';
+
+                // إخفاء بعض التفاصيل في الشاشات الصغيرة جداً
+                const detailsElements = document.querySelectorAll('.operation-details');
+                detailsElements.forEach(el => {
+                    if (screenWidth < 480) {
+                        el.style.fontSize = '11px';
+                        el.style.padding = '4px';
+                    }
+                });
+            } else if (screenWidth < 1024) {
+                // للشاشات المتوسطة
+                table.style.minWidth = '100%';
+                table.style.fontSize = '15px';
+            } else {
+                // للشاشات الكبيرة
+                table.style.minWidth = '100%';
+                table.style.fontSize = '16px';
+            }
+
+            // ضبط ارتفاع حقول الإدخال حسب حجم الشاشة
+            const textInputs = document.querySelectorAll('.text-input');
+            textInputs.forEach(input => {
+                if (screenWidth < 640) {
+                    input.style.height = '90px';
+                    input.style.fontSize = '13px';
+                } else if (screenWidth < 768) {
+                    input.style.height = '100px';
+                    input.style.fontSize = '14px';
+                } else {
+                    input.style.height = '120px';
+                    input.style.fontSize = '15px';
+                }
+            });
+        }
+
+        // دالة لإعادة حساب تخطيط الصفحة عند تغيير حجم النافذة
+        function handleResize() {
+            clearTimeout(window.resizeTimeout);
+            window.resizeTimeout = setTimeout(() => {
+                adjustTableLayout();
+                updateTableColumns();
+            }, 250); // تأخير 250ms بعد انتهاء تغيير الحجم
+        }
+
+        // دالة لتحديث أعمدة الجدول ديناميكياً
+        function updateTableColumns() {
+            const table = document.getElementById('calculation-table');
+            const screenWidth = window.innerWidth;
+
+            if (!table) return;
+
+            const headers = table.querySelectorAll('th');
+            const rows = table.querySelectorAll('tbody tr');
+
+            if (screenWidth < 640) {
+                // للشاشات الصغيرة، نجعل الأعمدة أضيق
+                if (headers[0]) headers[0].style.width = '40%';
+                if (headers[1]) headers[1].style.width = '60%';
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells[0]) cells[0].style.width = '40%';
+                    if (cells[1]) cells[1].style.width = '60%';
+                });
+            } else {
+                // للشاشات الكبيرة، نعود للأحجام الأصلية
+                if (headers[0]) headers[0].style.width = '35%';
+                if (headers[1]) headers[1].style.width = '65%';
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells[0]) cells[0].style.width = '35%';
+                    if (cells[1]) cells[1].style.width = '65%';
+                });
+            }
+        }
+
+        // دالة لإضافة صف جديد مع مراعاة حجم الشاشة
+        function addResponsiveTableRow(isEmpty = true) {
+            const rowId = addTableRow(isEmpty);
+
+            // ضبط خصائص الصف الجديد حسب حجم الشاشة
+            setTimeout(() => {
+                adjustTableLayout();
+                updateTableColumns();
+            }, 100);
+
+            return rowId;
+        }
+
+        // استبدال استدعاء addTableRow بـ addResponsiveTableRow
+        // في جميع الأماكن التي يتم فيها إضافة صف جديد
+
+
+
+
+        // دالة لتشغيل صوت النقر (اختياري)
+function playToggleSound() {
+    try {
+        // إنشاء صوت النقر بسيط باستخدام Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = instructionsCollapsed ? 600 : 400;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (e) {
+        // تجاهل الأخطاء إذا لم يكن Web Audio API مدعوماً
+        console.log("Web Audio API not supported");
+    }
+}
+
+// تحديث دالة toggleInstructions لإضافة الصوت
+function toggleInstructions() {
+    const content = document.getElementById('instructions-content');
+    const icon = document.getElementById('toggle-icon');
+    const container = document.getElementById('instructions-container');
+    
+    // تشغيل صوت النقر (اختياري)
+    playToggleSound();
+    
+    instructionsCollapsed = !instructionsCollapsed;
+    
+    if (instructionsCollapsed) {
+        // طي القسم
+        content.classList.add('collapsed');
+        icon.classList.add('collapsed');
+        container.style.borderBottomLeftRadius = '8px';
+        container.style.borderBottomRightRadius = '8px';
+        
+        // حفظ الحالة في localStorage
+        localStorage.setItem('instructionsCollapsed', 'true');
+    } else {
+        // فرد القسم
+        content.classList.remove('collapsed');
+        icon.classList.remove('collapsed');
+        
+        // إزالة الحالة من localStorage
+        localStorage.removeItem('instructionsCollapsed');
+    }
+}
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
